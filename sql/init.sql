@@ -8,7 +8,6 @@ CREATE TABLE IF NOT EXISTS people (
 );
 
 -- Create extensions
---CREATE EXTENSION IF NOT EXISTS pg_trgm;
 CREATE EXTENSION unaccent;
 
 -- Create function array to string immutable
