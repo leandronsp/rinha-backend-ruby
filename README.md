@@ -32,6 +32,7 @@ Highlights:
 4. Puma using a pool up to 5 threads
 5. [Chespirito](https://github.com/leandronsp/chespirito), a tiny Rack-based web framework
 6. A database pool of 50 connections
+7. Full-text search using ts_vector on PostgreSQL and GIN index
 
 ## Usage
 
