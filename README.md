@@ -20,7 +20,7 @@ Yet another Ruby version for [rinha do backend](https://github.com/zanfranceschi
 
 ## Stack
 
-* Ruby
+* Ruby 3.2 [+YJIT](https://shopify.engineering/ruby-yjit-is-production-ready)
 * PostgreSQL
 * NGINX
 
