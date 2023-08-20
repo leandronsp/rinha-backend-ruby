@@ -14,10 +14,10 @@ class PeopleRepository
     sql = <<~SQL
       SELECT id, name, nickname, birth_date, array_to_string(stack, ',') AS stack
       FROM people
-      WHERE to_tsvector('pt_en_unaccent', array_ts(stack || ARRAY[name, nickname])) @@ plainto_tsquery('pt_en_unaccent', $1)
+      WHERE array_ts(stack || ARRAY[name, nickname]) ILIKE '%' || $1 || '%'
     SQL
 
-    @database.execute_with_params(sql, [term]).to_a
+    @database.execute_with_params_ro(sql, [term]).to_a
   end
 
   def find(id)
@@ -27,7 +27,7 @@ class PeopleRepository
       WHERE id = $1
     SQL
 
-    @database.execute_with_params(sql, [id]).first
+    @database.execute_with_params_ro(sql, [id]).first
   end
 
   def create_person(nickname, name, birth_date, stack)
@@ -46,15 +46,17 @@ class PeopleRepository
       VALUES ($1, $2, $3, $4, $5)
     SQL
 
-    @database.execute_with_params(sql, 
-      [uuid, nickname, name, birth_date, cast_stack_to_array(stack)])
+    @database.execute_with_params(
+      sql, 
+      [uuid, nickname, name, birth_date, cast_stack_to_array(stack)]
+    )
     
     uuid
   end
 
   def count 
     sql = "SELECT COUNT(*) FROM people"
-    @database.execute(sql).first['count'].to_i
+    @database.execute_with_params_ro(sql, []).first['count'].to_i
   end
 
   private
@@ -76,7 +78,11 @@ class PeopleRepository
 
   def validate_array_of_str!(arr)
     raise ValidationError unless arr.respond_to?(:each)
-    arr.each(&method(:validate_str!))
+
+    arr.each do |str|
+      validate_str!(str)
+      validate_length!(str, 32)
+    end
   end
 
   def validate_length!(str, length)

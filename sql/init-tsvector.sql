@@ -1,13 +1,5 @@
--- Create table people
-CREATE TABLE IF NOT EXISTS people (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    nickname VARCHAR(32) UNIQUE NOT NULL,
-    birth_date DATE NOT NULL,
-    stack VARCHAR(32)[]
-);
-
 -- Create extensions
+CREATE EXTENSION pg_stat_statements;
 CREATE EXTENSION unaccent;
 
 -- Create function array to string immutable
@@ -23,7 +15,15 @@ ALTER TEXT SEARCH CONFIGURATION pt_en_unaccent
 ALTER MAPPING FOR hword, hword_part, word 
 WITH unaccent, portuguese_stem, english_stem;
 
-CREATE INDEX people_search_idx 
-ON people 
-USING GIN 
-(to_tsvector('pt_en_unaccent', array_ts(stack || ARRAY[name, nickname])));
+-- Create table people
+CREATE TABLE IF NOT EXISTS people (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(100) NOT NULL,
+    nickname VARCHAR(32) UNIQUE NOT NULL,
+    birth_date DATE NOT NULL,
+    stack VARCHAR(32)[]
+);
+
+-- Create search index
+CREATE INDEX people_search_idx ON people 
+USING GIN (to_tsvector('pt_en_unaccent', array_ts(stack || ARRAY[name, nickname])));
