@@ -31,8 +31,6 @@ class PeopleRepository
   end
 
   def create_person(nickname, name, birth_date, stack)
-    validate_uniqueness_of_nickname!(nickname)
-
     uuid = SecureRandom.uuid
 
     validate_str!(nickname)
@@ -89,12 +87,5 @@ class PeopleRepository
 
   def validate_length!(str, length)
     raise ValidationError if str.length > length
-  end
-
-  def validate_uniqueness_of_nickname!(nickname)
-    sql = "SELECT COUNT(*) FROM people WHERE nickname = $1"
-    count = @database.execute_with_params(sql, [nickname]).first['count'].to_i
-
-    raise ValidationError if count > 0
   end
 end
