@@ -9,4 +9,3 @@ RUN bundle install
 COPY . .
 
 EXPOSE 3000
-CMD ["bundle", "exec", "puma", "-s", "-p", "3000"]

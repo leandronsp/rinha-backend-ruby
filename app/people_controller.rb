@@ -44,7 +44,7 @@ class PeopleController < Chespirito::Controller
   def create 
     repository = PeopleRepository.new
 
-    uuid = repository.create_person(
+    nickname = repository.create_person(
       request.params['apelido'],
       request.params['nome'],
       request.params['nascimento'],
@@ -52,7 +52,7 @@ class PeopleController < Chespirito::Controller
     )
 
     response.status = 201
-    response.headers['Location'] = "/pessoas/#{uuid}"
+    response.headers['Location'] = "/pessoas/#{nickname}"
   rescue *PG_EXCEPTIONS
     response.status = 422
   end
