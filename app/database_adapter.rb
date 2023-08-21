@@ -2,16 +2,8 @@ require_relative 'pg_pool'
 
 class DatabaseAdapter
   def execute_with_params(sql, params)
-    instrument do
-      PgPool.primary.with do |conn|
-        conn.exec_params(sql, params).to_a
-      end
-    end
-  end
-
-  def execute_with_params_ro(sql, params)
-    instrument do
-      PgPool.replica.with do |conn|
+    PgPool.instance.with do |conn|
+      instrument do
         conn.exec_params(sql, params).to_a
       end
     end
@@ -19,6 +11,7 @@ class DatabaseAdapter
 
   def instrument
     return unless block_given?
+    return yield unless ENV['PROFILE_QUERIES']
 
     initial = Time.now
     result = yield

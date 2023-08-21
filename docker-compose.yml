@@ -1,64 +1,53 @@
 version: '3.9'
 
 services:
+  #############
+  #    API    #
+  #############
   api1: &api
-    build:
-      context: .
+    image: leandronsp/rinha-backend-ruby
     container_name: api1
     environment:
       - RUBY_YJIT_ENABLE=1
-      - DB_POOL_SIZE=10
-      - PG_PRIMARY_HOST=postgres
-      - PG_REPLICA_HOST=postgres
+      - DB_POOL_SIZE=5
+        #- WEB_CONCURRENCY=4
+        #- PGBOUNCER_ENABLED=1
+        #- PROFILE_QUERIES=true
     command: rackup
     volumes:
       - .:/app
       - rubygems:/usr/local/bundle
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: '0.5GB'
 
   api2: 
     <<: *api
     container_name: api2
 
+  #############
+  #    DB     #
+  #############
   postgres:
     image: postgres
     container_name: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
     volumes:
-      - ./sql/init-trgm.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./sql/postgresql.conf:/etc/postgresql/postgresql.conf
     command: postgres -c "config_file=/etc/postgresql/postgresql.conf"
-
-  pgmaster:
-    image: bitnami/postgresql
-    container_name: pgmaster
-    environment:
-      - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DATABASE=postgres
-      - POSTGRESQL_REPLICATION_MODE=master
-      - POSTGRESQL_REPLICATION_USER=postgres_replica
-      - POSTGRESQL_REPLICATION_PASSWORD=postgres_replica
-    volumes:
-      - ./sql/init-trgm.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./sql/postgresql.conf:/etc/postgresql/postgresql.conf
-
-  pgslave:
-    image: bitnami/postgresql
-    environment:
-      - POSTGRES_USERNAME=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DATABASE=postgres
-      - POSTGRESQL_REPLICATION_MODE=slave
-      - POSTGRESQL_REPLICATION_USER=postgres_replica
-      - POSTGRESQL_REPLICATION_PASSWORD=postgres_replica
-      - POSTGRESQL_MASTER_HOST=pgmaster
-      - POSTGRESQL_MASTER_PORT_NUMBER=5432
-    volumes:
-      - ./sql/init-trgm.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./sql/postgresql.conf:/etc/postgresql/postgresql.conf
-    depends_on:
-      - pgmaster
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
+          memory: '1.5GB'
 
   pgbouncer:
     image: pgbouncer/pgbouncer
@@ -69,9 +58,12 @@ services:
       - DATABASES_USER=postgres
       - DATABASES_PASSWORD=postgres
       - DATABASES_DBNAME=postgres
-      - DATABASES_POOL_SIZE=20
-      - PGBOUNCER_MAX_CLIENT_CONN=100
+      - DATABASES_POOL_SIZE=50
+      - PGBOUNCER_MAX_CLIENT_CONN=50
 
+  #############
+  #   PROXY   #
+  #############
   nginx:
     image: nginx 
     container_name: nginx
@@ -79,6 +71,14 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 9999:9999
+    depends_on:
+      - api1
+      - api2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: '0.5GB'
 
 volumes:
   rubygems:

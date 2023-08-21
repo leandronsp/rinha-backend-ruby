@@ -17,7 +17,7 @@ class PeopleRepository
       WHERE array_ts(stack || ARRAY[name, nickname]) ILIKE '%' || $1 || '%'
     SQL
 
-    @database.execute_with_params_ro(sql, [term]).to_a
+    @database.execute_with_params(sql, [term]).to_a
   end
 
   def find(id)
@@ -27,10 +27,12 @@ class PeopleRepository
       WHERE id = $1
     SQL
 
-    @database.execute_with_params_ro(sql, [id]).first
+    @database.execute_with_params(sql, [id]).first
   end
 
   def create_person(nickname, name, birth_date, stack)
+    validate_uniqueness_of_nickname!(nickname)
+
     uuid = SecureRandom.uuid
 
     validate_str!(nickname)
@@ -56,7 +58,7 @@ class PeopleRepository
 
   def count 
     sql = "SELECT COUNT(*) FROM people"
-    @database.execute_with_params_ro(sql, []).first['count'].to_i
+    @database.execute_with_params(sql, []).first['count'].to_i
   end
 
   private
@@ -87,5 +89,12 @@ class PeopleRepository
 
   def validate_length!(str, length)
     raise ValidationError if str.length > length
+  end
+
+  def validate_uniqueness_of_nickname!(nickname)
+    sql = "SELECT COUNT(*) FROM people WHERE nickname = $1"
+    count = @database.execute_with_params(sql, [nickname]).first['count'].to_i
+
+    raise ValidationError if count > 0
   end
 end

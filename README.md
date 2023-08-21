@@ -28,11 +28,10 @@ Highlights:
 
 1. Two Ruby apps behind NGINX
 2. Each app running Puma, a multi-threaded HTTP server
-3. Puma in cluster mode with 2 CPU workers (forking)
-4. Puma using a pool up to 5 threads
-5. [Chespirito](https://github.com/leandronsp/chespirito), a tiny Rack-based web framework
-6. A database pool of 50 connections
-7. Full-text search using ts_vector on PostgreSQL and GIN index
+3. Puma using a pool up to 5 threads
+4. [Chespirito](https://github.com/leandronsp/chespirito), a tiny Rack-based web framework
+5. A database pool of 5 connections for each Puma app
+6. Search based on pg_trgm and GIN index
 
 ## Usage
 
@@ -41,17 +40,20 @@ $ make help
 
 Usage: make <target>
   help                       Prints available commands
-  compose.up                 Run the entire stack
-  compose.down               Stop the entire stack
+  start                      Start the rinha
   docker.stats               Show docker stats
   health.check               Check the stack is healthy
   stress.it                  Run stress tests
+  docker.build               Build the docker image
+  docker.push                Push the docker image
 ```
 
 ## Stress it!
 
 ```bash
-$ make stress.it
+$ make start                 # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
+$ make stress.it             # Unleash the madness
+
 $ open stress-test/user-files/results/**/index.html
 ```
 ----
