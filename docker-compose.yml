@@ -13,10 +13,6 @@ services:
         #- WEB_CONCURRENCY=4
         #- PGBOUNCER_ENABLED=1
         #- PROFILE_QUERIES=true
-    command: rackup
-    volumes:
-      - .:/app
-      - rubygems:/usr/local/bundle
     depends_on:
       - postgres
     deploy:
@@ -79,6 +75,3 @@ services:
         limits:
           cpus: '0.2'
           memory: '0.5GB'
-
-volumes:
-  rubygems:

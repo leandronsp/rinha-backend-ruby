@@ -9,3 +9,4 @@ RUN bundle install
 COPY . .
 
 EXPOSE 3000
+CMD ["rackup"]
