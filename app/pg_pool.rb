@@ -10,6 +10,10 @@ class PgPool
     end
   end
 
+  #def self.instance
+  #  @instance = PG.connect(configuration)
+  #end
+
   def self.configuration
     base_config = {
       host: 'postgres',

@@ -5,21 +5,26 @@ services:
   #    API    #
   #############
   api1: &api
-    image: leandronsp/rinha-backend-ruby
+    #image: leandronsp/rinha-backend-ruby
+    build: .
     container_name: api1
     environment:
       - RUBY_YJIT_ENABLE=1
       - DB_POOL_SIZE=5
-        #- WEB_CONCURRENCY=4
+      - PROFILE_QUERIES=true
+        #- WEB_CONCURRENCY=2
         #- PGBOUNCER_ENABLED=1
-        #- PROFILE_QUERIES=true
+    command: rackup
+    volumes:
+      - .:/app
+      - rubygems:/usr/local/bundle
     depends_on:
       - postgres
     deploy:
       resources:
         limits:
-          cpus: '0.3'
-          memory: '0.5GB'
+          cpus: '0.2'
+          memory: '0.5'
 
   api2: 
     <<: *api
@@ -38,11 +43,11 @@ services:
     volumes:
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./sql/postgresql.conf:/etc/postgresql/postgresql.conf
-    command: postgres -c "config_file=/etc/postgresql/postgresql.conf"
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
     deploy:
       resources:
         limits:
-          cpus: '0.7'
+          cpus: '1'
           memory: '1.5GB'
 
   pgbouncer:
@@ -54,8 +59,9 @@ services:
       - DATABASES_USER=postgres
       - DATABASES_PASSWORD=postgres
       - DATABASES_DBNAME=postgres
-      - DATABASES_POOL_SIZE=50
-      - PGBOUNCER_MAX_CLIENT_CONN=50
+      - PGBOUNCER_MAX_CLIENT_CONN=800
+      - PGBOUNCER_RESERVE_POOL_SIZE=100
+      - PGBOUNCER_DEFAULT_POOL_SIZE=300
 
   #############
   #   PROXY   #
@@ -73,5 +79,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.2'
+          cpus: '0.1'
           memory: '0.5GB'
+
+volumes:
+  rubygems:
