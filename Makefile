@@ -16,6 +16,7 @@ health.check: ## Check the stack is healthy
 
 stress.it: ## Run stress tests
 	@sh stress-test/run-test.sh
+	@sh stress-test/report-test.sh
 
 docker.build: ## Build the docker image
 	@docker build -t leandronsp/rinha-backend-ruby .

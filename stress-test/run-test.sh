@@ -13,3 +13,11 @@ sh $GATLING_BIN_DIR/gatling.sh -rm local -s RinhaBackendSimulation \
     -rsf $WORKSPACE/user-files/resources \
 
 curl -v "http://localhost:9999/contagem-pessoas"
+
+## Report
+GATLING_REPORT=`ls $WORKSPACE/user-files/results | sort | head -n 1`
+OUTPUT_REPORT=/var/www/html/rinha
+
+sudo cp -R $WORKSPACE/user-files/results/$GATLING_REPORT $OUTPUT_REPORT
+
+echo "Report written to $OUTPUT_REPORT. Open http://localhost/rinha/index.html to see it."
