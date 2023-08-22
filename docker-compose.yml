@@ -5,7 +5,7 @@ services:
   #    API    #
   #############
   api1: &api
-    #image: leandronsp/rinha-backend-ruby
+    image: leandronsp/rinha-backend-ruby
     build: .
     container_name: api1
     environment:
@@ -16,10 +16,6 @@ services:
       - DB_POOL_SIZE=8
       - WEB_CONCURRENCY=3
         #- PGBOUNCER_ENABLED=1
-    command: rackup
-    volumes:
-      - .:/app
-      - rubygems:/usr/local/bundle
     depends_on:
       - postgres
         #- pgbouncer
@@ -89,6 +85,3 @@ services:
         limits:
           cpus: '0.5'
           memory: '0.5GB'
-
-volumes:
-  rubygems:
