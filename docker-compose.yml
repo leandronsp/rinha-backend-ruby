@@ -9,7 +9,7 @@ services:
     container_name: api1
     environment:
       - SERVER=puma
-      - FRAMEWORK=chespirito
+      - FRAMEWORK=roda
       - RUBY_YJIT_ENABLE=1
       - THREAD_POOL=0:8
       - DB_POOL_SIZE=8
