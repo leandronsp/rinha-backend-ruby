@@ -4,7 +4,7 @@ CREATE EXTENSION pg_trgm;
 -- Create function array to string immutable
 CREATE OR REPLACE FUNCTION array_ts(arr TEXT[])
 RETURNS TEXT IMMUTABLE LANGUAGE SQL AS $$
-SELECT unaccent(array_to_string(arr, ' ')) $$;
+SELECT array_to_string(arr, ' ') $$;
 
 -- Create table people
 CREATE TABLE IF NOT EXISTS people (
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS people (
     name VARCHAR(100) NOT NULL,
     nickname VARCHAR(32) UNIQUE NOT NULL,
     birth_date DATE NOT NULL,
-    stack VARCHAR(32)[] NOT NULL,
+    stack VARCHAR(32)[] NOT NULL
 );
 
 -- Create search index

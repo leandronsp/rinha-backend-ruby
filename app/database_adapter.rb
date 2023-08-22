@@ -1,28 +1,32 @@
-require_relative 'pg_pool'
+require 'pg'
+require 'connection_pool'
 
 class DatabaseAdapter
-  def execute_with_params(sql, params)
-    PgPool.instance.with do |conn|
-      instrument do
-        conn.exec_params(sql, params).to_a
-      end
+  POOL_SIZE = ENV['DB_POOL_SIZE'] || 10
+
+  def self.pool
+    @pool ||= ConnectionPool.new(size: POOL_SIZE) do
+      PG.connect(configuration)
     end
   end
 
-  def instrument
-    return unless block_given?
-    return yield unless ENV['PROFILE_QUERIES']
+  def self.new_connection
+    PG.connect(configuration)
+  end
 
-    initial = Time.now
-    result = yield
-    total = (Time.now - initial).to_f * 1000
+  def self.configuration
+    base_config = {
+      host: 'postgres',
+      dbname: 'postgres',
+      user: 'postgres',
+      password: 'postgres'
+    }
 
-    if total > 50
-      msg = "Query took #{total} ms"
-      puts msg
-      #File.open('slow_queries.log', 'a') { |f| f.puts(msg) }
-    end
+    return base_config unless ENV['PGBOUNCER_ENABLED']
 
-    result
+    base_config.merge({
+      host: 'pgbouncer',
+      port: 6432
+    })
   end
 end

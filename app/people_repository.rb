@@ -6,10 +6,6 @@ require_relative 'database_adapter'
 class PeopleRepository
   class ValidationError < StandardError; end;
 
-  def initialize
-    @database = DatabaseAdapter.new
-  end
-
   def search(term)
     sql = <<~SQL
       SELECT id, name, nickname, birth_date, array_to_string(stack, ',') AS stack
@@ -17,46 +13,42 @@ class PeopleRepository
       WHERE array_ts(stack || ARRAY[name, nickname]) ILIKE '%' || $1 || '%'
     SQL
 
-    @database.execute_with_params(sql, [term]).to_a
+    execute_with_params(sql, [term]).to_a
   end
 
   def find(id)
     sql = <<~SQL
       SELECT id, name, nickname, birth_date, array_to_string(stack, ',') AS stack
-      FROM people
-      WHERE id = $1
+      FROM people WHERE id = $1
     SQL
 
-    @database.execute_with_params(sql, [id]).first
+    execute_with_params(sql, [id]).first
   end
 
   def create_person(nickname, name, birth_date, stack)
-    uuid = SecureRandom.uuid
+    SecureRandom.uuid.tap do |uuid|
+      validate_str!(nickname)
+      validate_str!(name)
+      validate_date!(birth_date)
+      validate_array_of_str!(stack)
 
-    validate_str!(nickname)
-    validate_str!(name)
-    validate_date!(birth_date)
-    validate_array_of_str!(stack)
+      validate_length!(nickname, 32)
+      validate_length!(name, 100)
 
-    validate_length!(nickname, 32)
-    validate_length!(name, 100)
+      sql = <<~SQL
+        INSERT INTO people (id, nickname, name, birth_date, stack)
+        VALUES ($1, $2, $3, $4, $5)
+      SQL
 
-    sql = <<~SQL
-      INSERT INTO people (id, nickname, name, birth_date, stack)
-      VALUES ($1, $2, $3, $4, $5)
-    SQL
-
-    @database.execute_with_params(
-      sql, 
-      [uuid, nickname, name, birth_date, cast_stack_to_array(stack)]
-    )
-    
-    uuid
+      execute_with_params(sql, 
+        [uuid, nickname, name, birth_date, cast_stack_to_array(stack)],
+      )
+    end
   end
 
   def count 
     sql = "SELECT COUNT(*) FROM people"
-    @database.execute_with_params(sql, []).first['count'].to_i
+    execute_with_params(sql, []).first['count'].to_i
   end
 
   private
@@ -87,5 +79,16 @@ class PeopleRepository
 
   def validate_length!(str, length)
     raise ValidationError if str.length > length
+  end
+
+  def execute_with_params(sql, params, pool: true)
+    if pool
+      DatabaseAdapter.pool.with do |conn|
+        conn.exec_params(sql, params).to_a
+      end
+    else
+      conn = DatabaseAdapter.new_connection
+      conn.exec_params(sql, params).to_a
+    end
   end
 end

@@ -3,15 +3,80 @@ GEM
   specs:
     adelnor (0.0.6)
       rack
+    async (2.6.3)
+      console (~> 1.10)
+      fiber-annotation
+      io-event (~> 1.1)
+      timers (~> 4.1)
+    async-container (0.16.12)
+      async
+      async-io
+    async-http (0.60.2)
+      async (>= 1.25)
+      async-io (>= 1.28)
+      async-pool (>= 0.2)
+      protocol-http (~> 0.24.0)
+      protocol-http1 (~> 0.15.0)
+      protocol-http2 (~> 0.15.0)
+      traces (>= 0.10.0)
+    async-http-cache (0.4.3)
+      async-http (~> 0.56)
+    async-io (1.35.0)
+      async
+    async-pool (0.4.0)
+      async (>= 1.25)
+    build-environment (1.13.0)
     chespirito (0.0.3)
       adelnor
       rack
     connection_pool (2.4.1)
+    console (1.23.2)
+      fiber-annotation
+      fiber-local
+    falcon (0.42.3)
+      async
+      async-container (~> 0.16.0)
+      async-http (~> 0.57)
+      async-http-cache (~> 0.4.0)
+      async-io (~> 1.22)
+      build-environment (~> 1.13)
+      bundler
+      localhost (~> 1.1)
+      openssl (~> 3.0)
+      process-metrics (~> 0.2.0)
+      protocol-rack (~> 0.1)
+      samovar (~> 2.1)
+    fiber-annotation (0.2.0)
+    fiber-local (1.0.0)
+    io-event (1.2.3)
+    localhost (1.1.10)
+    mapping (1.1.1)
     nio4r (2.5.9)
+    openssl (3.1.0)
     pg (1.5.3)
+    process-metrics (0.2.1)
+      console (~> 1.8)
+      samovar (~> 2.1)
+    protocol-hpack (1.4.2)
+    protocol-http (0.24.7)
+    protocol-http1 (0.15.1)
+      protocol-http (~> 0.22)
+    protocol-http2 (0.15.1)
+      protocol-hpack (~> 1.4)
+      protocol-http (~> 0.18)
+    protocol-rack (0.2.6)
+      protocol-http (~> 0.23)
+      rack (>= 1.0)
     puma (6.3.0)
       nio4r (~> 2.0)
     rack (2.2.8)
+    roda (3.71.0)
+      rack
+    samovar (2.2.0)
+      console (~> 1.0)
+      mapping (~> 1.0)
+    timers (4.3.5)
+    traces (0.11.1)
 
 PLATFORMS
   x86_64-linux
@@ -19,9 +84,11 @@ PLATFORMS
 DEPENDENCIES
   chespirito
   connection_pool
+  falcon
   pg
-  puma (~> 6.x)
-  rack (> 2.2.4)
+  puma
+  rack
+  roda
 
 BUNDLED WITH
    2.4.10

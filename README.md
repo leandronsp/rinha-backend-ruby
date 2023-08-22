@@ -10,8 +10,6 @@
 
 Yet another Ruby version for [rinha do backend](https://github.com/zanfranceschi/rinha-de-backend-2023-q3)
 
-![gatling report](https://github.com/leandronsp/rinha-backend-ruby/blob/main/screenshots/gatling.png?raw=true)
-
 ## Requirements
 
 * [Docker](https://docs.docker.com/get-docker/)
@@ -23,15 +21,6 @@ Yet another Ruby version for [rinha do backend](https://github.com/zanfranceschi
 * Ruby 3.2 [+YJIT](https://shopify.engineering/ruby-yjit-is-production-ready)
 * PostgreSQL
 * NGINX
-
-Highlights:
-
-1. Two Ruby apps behind NGINX
-2. Each app running Puma, a multi-threaded HTTP server
-3. Puma using a pool up to 5 threads
-4. [Chespirito](https://github.com/leandronsp/chespirito), a tiny Rack-based web framework
-5. A database pool of 5 connections for each Puma app
-6. Search based on pg_trgm and GIN index
 
 ## Usage
 

@@ -9,10 +9,12 @@ services:
     build: .
     container_name: api1
     environment:
+      - SERVER=puma
+      - FRAMEWORK=chespirito
       - RUBY_YJIT_ENABLE=1
-      - DB_POOL_SIZE=5
-      - PROFILE_QUERIES=true
-        #- WEB_CONCURRENCY=2
+      - THREAD_POOL=0:8
+      - DB_POOL_SIZE=8
+      - WEB_CONCURRENCY=3
         #- PGBOUNCER_ENABLED=1
     command: rackup
     volumes:
@@ -20,11 +22,12 @@ services:
       - rubygems:/usr/local/bundle
     depends_on:
       - postgres
+        #- pgbouncer
     deploy:
       resources:
         limits:
-          cpus: '0.2'
-          memory: '0.5'
+          cpus: '0.8'
+          memory: '0.5GB'
 
   api2: 
     <<: *api
@@ -62,6 +65,11 @@ services:
       - PGBOUNCER_MAX_CLIENT_CONN=800
       - PGBOUNCER_RESERVE_POOL_SIZE=100
       - PGBOUNCER_DEFAULT_POOL_SIZE=300
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '1GB'
 
   #############
   #   PROXY   #
@@ -79,7 +87,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.1'
+          cpus: '0.5'
           memory: '0.5GB'
 
 volumes:
