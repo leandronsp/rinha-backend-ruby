@@ -8,17 +8,16 @@ class PeopleRepository
 
   def search(term)
     sql = <<~SQL
-      SELECT id, name, nickname, birth_date, array_to_string(stack, ',') AS stack
-      FROM people
-      WHERE array_ts(stack || ARRAY[name, nickname]) ILIKE '%' || $1 || '%'
+      SELECT id, name, nickname, birth_date, stack
+      FROM people WHERE search LIKE '%' || $1 || '%'
     SQL
 
-    execute_with_params(sql, [term]).to_a
+    execute_with_params(sql, [term.downcase])
   end
 
   def find(id)
     sql = <<~SQL
-      SELECT id, name, nickname, birth_date, array_to_string(stack, ',') AS stack
+      SELECT id, name, nickname, birth_date, stack
       FROM people WHERE id = $1
     SQL
 
@@ -30,7 +29,6 @@ class PeopleRepository
       validate_str!(nickname)
       validate_str!(name)
       validate_date!(birth_date)
-      validate_array_of_str!(stack)
 
       validate_length!(nickname, 32)
       validate_length!(name, 100)
@@ -41,7 +39,7 @@ class PeopleRepository
       SQL
 
       execute_with_params(sql, 
-        [uuid, nickname, name, birth_date, cast_stack_to_array(stack)],
+        [uuid, nickname, name, birth_date, cast_stack(stack)],
       )
     end
   end
@@ -53,11 +51,11 @@ class PeopleRepository
 
   private
 
-  def cast_stack_to_array(stack) 
-    return "{}" unless stack
-    return "{}" unless stack.respond_to?(:map)
+  def cast_stack(stack) 
+    return unless stack
+    return unless stack.respond_to?(:map)
 
-    "{#{stack.map { |s| "'#{s}'" }.join(',')}}"
+    stack.join(' ')
   end
 
   def validate_str!(str)
@@ -81,14 +79,16 @@ class PeopleRepository
     raise ValidationError if str.length > length
   end
 
-  def execute_with_params(sql, params, pool: true)
-    if pool
+  def execute_with_params(sql, params)
+    if ENV['USE_POOL']
       DatabaseAdapter.pool.with do |conn|
         conn.exec_params(sql, params).to_a
       end
     else
       conn = DatabaseAdapter.new_connection
-      conn.exec_params(sql, params).to_a
+      conn.exec_params(sql, params).to_a.tap do
+        conn.close
+      end
     end
   end
 end

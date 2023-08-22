@@ -11,7 +11,7 @@ class PersonSerializer
       apelido: @person['nickname'],
       nome: @person['name'],
       nascimento: @person['birth_date'],
-      stack: (@person['stack'] || '').split(',')
+      stack: (@person['stack'] || '').split(' ')
     }
   end
 end
