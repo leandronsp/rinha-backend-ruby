@@ -8,12 +8,12 @@ services:
     image: leandronsp/rinha-backend-ruby
     container_name: api1
     environment:
-      - SERVER=falcon
+      - SERVER=puma
       - FRAMEWORK=roda
       - RUBY_YJIT_ENABLE=1
-      - THREAD_POOL=0:3
-      - DB_POOL_SIZE=800
-      - WEB_CONCURRENCY=6
+      - THREAD_POOL=0:5
+      - DB_POOL_SIZE=5
+      - WEB_CONCURRENCY=2
       - PGBOUNCER_ENABLED=1
     depends_on:
       - postgres
@@ -59,7 +59,7 @@ services:
       - DATABASES_DBNAME=postgres
       - PGBOUNCER_MAX_CLIENT_CONN=1000
       - PGBOUNCER_RESERVE_POOL_SIZE=100
-      - PGBOUNCER_DEFAULT_POOL_SIZE=300
+      - PGBOUNCER_DEFAULT_POOL_SIZE=200
     deploy:
       resources:
         limits:
