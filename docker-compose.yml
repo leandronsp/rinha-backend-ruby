@@ -6,7 +6,6 @@ services:
   #############
   api1: &api
     image: leandronsp/rinha-backend-ruby
-    build: .
     container_name: api1
     environment:
       - SERVER=puma
