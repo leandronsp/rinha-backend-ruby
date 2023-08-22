@@ -2,7 +2,7 @@ require 'pg'
 require 'connection_pool'
 
 class DatabaseAdapter
-  POOL_SIZE = ENV['DB_POOL_SIZE'] || 10
+  POOL_SIZE = ENV['DB_POOL_SIZE'] || 5
 
   def self.pool
     @pool ||= ConnectionPool.new(size: POOL_SIZE) do

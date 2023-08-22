@@ -1,5 +1,5 @@
 if ENV['FRAMEWORK'] == 'chespirito'
   load 'chespirito.rb'
-elsif ENV['FRAMEWORK'] == 'roda'
+else
   load 'roda.rb'
 end

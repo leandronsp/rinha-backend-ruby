@@ -78,8 +78,8 @@ RinhaApp = Chespirito::App.configure do |app|
   app.register_route('GET', '/contagem-pessoas', [PeopleController, :count])
 end
 
-if ENV['SERVER'] == 'puma'
-  Rack::Handler::Puma.run(RinhaApp, Port: 3000, Threads: ENV['THREAD_POOL'] || '0:16')
-elsif ENV['SERVER'] == 'falcon'
+if ENV['SERVER'] == 'falcon'
   Rack::Handler::Falcon.run(RinhaApp, Port: 3000, Host: '0.0.0.0')
+else
+  Rack::Handler::Puma.run(RinhaApp, Port: 3000, Threads: ENV['THREAD_POOL'] || '0:5')
 end
