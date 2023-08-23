@@ -15,6 +15,7 @@ Yet another Ruby version for [rinha do backend](https://github.com/zanfranceschi
 * [Docker](https://docs.docker.com/get-docker/)
 * [curl](https://curl.se/download.html)
 * [Gatling](https://gatling.io/open-source/), a performance testing tool
+* Make (optional)
 
 ## Stack
 
@@ -40,11 +41,22 @@ Usage: make <target>
 
 ## Starting the app
 
-Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL):
+Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL) using the [public image](https://hub.docker.com/r/leandronsp/rinha-backend-ruby) `leandronsp/rinha-backend-ruby`:
 
 ```bash
-$ make start.prod # Using the public image leandronsp/rinha-backend-ruby
-$ make start.dev  # Using local build and volumes
+$ docker compose -f docker-compose-prod.yml up -d nginx
+
+# Or using make
+$ make start.prod
+```
+
+Or, in case you want to run using local build and volumes:
+
+```bash
+$ docker compose up -d nginx
+
+# Or using make
+$ make start.dev
 ```
 
 ## Unleash the madness
