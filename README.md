@@ -41,7 +41,13 @@ Usage: make <target>
 
 ## Starting the app
 
-Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL) using the [public image](https://hub.docker.com/r/leandronsp/rinha-backend-ruby) `leandronsp/rinha-backend-ruby`:
+The stack is composed by:
+
+* 1 NGINX
+* 2 Ruby apps
+* 1 PostgreSQL
+
+You can start the stack by using the [public image](https://hub.docker.com/r/leandronsp/rinha-backend-ruby) `leandronsp/rinha-backend-ruby` with the following command:
 
 ```bash
 $ docker compose -f docker-compose-prod.yml up -d nginx
@@ -50,13 +56,22 @@ $ docker compose -f docker-compose-prod.yml up -d nginx
 $ make start.prod
 ```
 
-Or, in case you want to run using local build and volumes:
+Or, in case you want to run the stack using local build and volumes:
 
 ```bash
 $ docker compose up -d nginx
 
 # Or using make
 $ make start.dev
+```
+
+Perform a health check to ensure the app is running correctly:
+
+```bash
+$ curl -v http://localhost:9999/contagem-pessoas
+
+# Or 
+$ make health.check
 ```
 
 ## Unleash the madness
