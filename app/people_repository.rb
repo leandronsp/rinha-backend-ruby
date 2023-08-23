@@ -9,10 +9,11 @@ class PeopleRepository
   def search(term)
     sql = <<~SQL
       SELECT id, name, nickname, birth_date, stack
-      FROM people WHERE search LIKE '%' || $1 || '%'
+      FROM people WHERE search LIKE $1
+      LIMIT 50
     SQL
 
-    execute_with_params(sql, [term.downcase])
+    execute_with_params(sql, ["%#{term.downcase}%"])
   end
 
   def find(id)
