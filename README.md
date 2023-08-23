@@ -65,7 +65,7 @@ $ docker compose up -d nginx
 $ make start.dev
 ```
 
-Perform a health check to ensure the app is running correctly:
+Then perform a health check to ensure the app is running correctly:
 
 ```bash
 $ curl -v http://localhost:9999/contagem-pessoas
