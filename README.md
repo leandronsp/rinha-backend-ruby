@@ -29,7 +29,8 @@ $ make help
 
 Usage: make <target>
   help                       Prints available commands
-  start                      Start the rinha
+  start.dev                  Start the rinha in Dev
+  start.prod                 Start the rinha in Prod
   docker.stats               Show docker stats
   health.check               Check the stack is healthy
   stress.it                  Run stress tests
@@ -37,10 +38,16 @@ Usage: make <target>
   docker.push                Push the docker image
 ```
 
-## Stress it!
+## Stress the app in Prod
 
 ```bash
-$ make start                 # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
+$ make start.prod            # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
+```
+
+## Stress it in Development environment
+
+```bash
+$ make start.dev             # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
 $ make stress.it             # Unleash the madness
 
 $ open stress-test/user-files/results/**/index.html

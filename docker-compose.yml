@@ -7,9 +7,9 @@ services:
     environment:
       - RUBY_YJIT_ENABLE=1
       - USE_POOL=1
-      - DB_POOL_SIZE=8
-      - WEB_CONCURRENCY=4
-      - THREAD_POOL=0:8
+      - DB_POOL_SIZE=5
+      - WEB_CONCURRENCY=5
+      - THREAD_POOL=0:5
     command: rackup
     volumes:
       - .:/app
@@ -19,8 +19,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.4'
-          memory: '1GB'
+          cpus: '0.2'
+          memory: '0.9GB'
 
   api2: 
     <<: *api
@@ -40,8 +40,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.6'
-          memory: '0.8GB'
+          cpus: '0.9'
+          memory: '1GB'
 
   nginx:
     image: nginx 
@@ -56,7 +56,7 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.1'
+          cpus: '0.2'
           memory: '0.2GB'
 volumes:
   rubygems:
