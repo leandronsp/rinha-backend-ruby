@@ -38,20 +38,24 @@ Usage: make <target>
   docker.push                Push the docker image
 ```
 
-## Stress the app in Prod
+## Starting the app
+
+Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL):
 
 ```bash
-$ make start.prod            # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
+$ make start.prod # Using the public image leandronsp/rinha-backend-ruby
+$ make start.dev  # Using local build and volumes
 ```
 
-## Stress it in Development environment
+## Unleash the madness
+
+Make sure you copy all the resource/simulation files and Gatling script to the project and:
 
 ```bash
-$ make start.dev             # Start the stack (1 NGINX + 2 Ruby apps + 1 PostgreSQL)
-$ make stress.it             # Unleash the madness
-
+$ make stress.it 
 $ open stress-test/user-files/results/**/index.html
 ```
+
 ----
 
 [ASCII art generator](http://www.network-science.de/ascii/)
