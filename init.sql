@@ -3,8 +3,8 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 -- Create table people
 CREATE TABLE IF NOT EXISTS people (
-    id VARCHAR(36),
-    nickname VARCHAR(32) CONSTRAINT nickname_pk PRIMARY KEY,
+    id UUID PRIMARY KEY,
+    nickname VARCHAR(32) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL,
     birth_date DATE NOT NULL,
     stack VARCHAR(1024),
@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS people (
 );
 
 -- Create search index
-CREATE INDEX CONCURRENTLY people_search_idx ON people USING GIST (search gist_trgm_ops);
+CREATE INDEX CONCURRENTLY people_search_idx ON people USING GIN (search gin_trgm_ops);

@@ -7,16 +7,18 @@ services:
     environment:
       - RUBY_YJIT_ENABLE=1
       - USE_POOL=1
-      - DB_POOL_SIZE=8
+      - DB_POOL_SIZE=5
       - WEB_CONCURRENCY=2
-      - THREAD_POOL=0:8
+      - THREAD_POOL=0:5
+        #- PGBOUNCER_ENABLED=1
     depends_on:
       - postgres
+        #- pgbouncer
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: '1GB'
+          cpus: '0.2'
+          memory: '0.9GB'
 
   api2: 
     <<: *api
@@ -36,8 +38,31 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.6'
-          memory: '0.8GB'
+          cpus: '0.9'
+          memory: '1GB'
+
+  pgbouncer:
+    image: pgbouncer/pgbouncer
+    hostname: pgbouncer
+    container_name: pgbouncer
+    environment:
+      - DATABASES_HOST=postgres
+      - DATABASES_PORT=5432
+      - DATABASES_USER=postgres
+      - DATABASES_PASSWORD=postgres
+      - DATABASES_DBNAME=postgres
+      - DATABASES_POOL_SIZE=200
+      - PGBOUNCER_RESERVE_POOL_SIZE=200
+      - PGBOUNCER_MAX_CLIENT_CONN=1000
+      - PGBOUNCER_DEFAULT_POOL_SIZE=200
+    depends_on:
+      - postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: '0.5GB'
+
 
   nginx:
     image: nginx 
@@ -52,5 +77,5 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.1'
+          cpus: '0.2'
           memory: '0.2GB'
