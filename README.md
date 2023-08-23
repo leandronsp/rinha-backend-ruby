@@ -19,9 +19,9 @@ Yet another Ruby version for [rinha do backend](https://github.com/zanfranceschi
 
 ## Stack
 
-* Ruby 3.2 [+YJIT](https://shopify.engineering/ruby-yjit-is-production-ready)
-* PostgreSQL
-* NGINX
+* 2 Ruby 3.2 [+YJIT](https://shopify.engineering/ruby-yjit-is-production-ready) apps
+* 1 PostgreSQL
+* 1 NGINX
 
 ## Usage
 
@@ -40,12 +40,6 @@ Usage: make <target>
 ```
 
 ## Starting the app
-
-The stack is composed by:
-
-* 1 NGINX
-* 2 Ruby apps
-* 1 PostgreSQL
 
 You can start the stack by using the [public image](https://hub.docker.com/r/leandronsp/rinha-backend-ruby) `leandronsp/rinha-backend-ruby` with the following command:
 
