@@ -1,6 +1,11 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    adelnor (0.0.6)
+      rack
+    chespirito (0.0.3)
+      adelnor
+      rack
     connection_pool (2.4.1)
     nio4r (2.5.9)
     pg (1.5.3)
@@ -14,6 +19,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  chespirito
   connection_pool
   pg
   puma

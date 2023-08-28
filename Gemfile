@@ -12,3 +12,4 @@ gem 'rack'
 # Rack apps
 gem 'puma'
 gem 'roda'
+gem 'chespirito'

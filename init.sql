@@ -9,9 +9,9 @@ CREATE TABLE IF NOT EXISTS people (
     birth_date DATE NOT NULL,
     stack VARCHAR(1024),
     search VARCHAR(1160) GENERATED ALWAYS AS (
-        LOWER(name) || ' ' || LOWER(nickname) || ' ' || LOWER(stack)
+        LOWER(name || ' ' || nickname || ' ' || stack)
     ) STORED
 );
 
 -- Create search index
-CREATE INDEX CONCURRENTLY people_search_idx ON people USING GIN (search gin_trgm_ops);
+CREATE INDEX people_search_idx ON people USING GIST (search gist_trgm_ops);

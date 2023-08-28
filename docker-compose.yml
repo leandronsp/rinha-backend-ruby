@@ -2,14 +2,17 @@ version: '3.9'
 
 services:
   api1: &api
-    build: .
+    build: 
+      context: .
+      target: base
     container_name: api1
     environment:
       - RUBY_YJIT_ENABLE=1
       - USE_POOL=1
-      - DB_POOL_SIZE=5
-      - WEB_CONCURRENCY=5
-      - THREAD_POOL=0:5
+      - DB_POOL_SIZE=3
+      - THREAD_POOL=0:3
+      - FRAMEWORK=chespirito
+        #- FRAMEWORK=roda
     command: rackup
     volumes:
       - .:/app
