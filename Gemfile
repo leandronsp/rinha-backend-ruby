@@ -13,3 +13,6 @@ gem 'rack'
 gem 'puma'
 gem 'roda'
 gem 'chespirito'
+
+gem 'async'
+gem 'falcon'

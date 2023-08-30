@@ -8,10 +8,11 @@ services:
     container_name: api1
     environment:
       - RUBY_YJIT_ENABLE=1
-      - USE_POOL=1
-      - DB_POOL_SIZE=3
-      - THREAD_POOL=0:3
+      - DB_POOL_SIZE=10
+      - SERVER=falcon
       - FRAMEWORK=chespirito
+        #- THREAD_POOL=0:3
+        #- SERVER=puma
         #- FRAMEWORK=roda
     command: rackup
     volumes:

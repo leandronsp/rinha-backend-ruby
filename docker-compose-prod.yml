@@ -6,7 +6,6 @@ services:
     container_name: api1
     environment:
       - RUBY_YJIT_ENABLE=1
-      - USE_POOL=1
       - DB_POOL_SIZE=5
       - WEB_CONCURRENCY=2
       - THREAD_POOL=0:5
