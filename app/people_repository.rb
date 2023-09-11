@@ -1,6 +1,5 @@
 require 'securerandom'
 require 'date'
-require 'async'
 
 require_relative 'database_adapter'
 
@@ -8,56 +7,48 @@ class PeopleRepository
   class ValidationError < StandardError; end;
 
   def search(term)
-    Async do 
-      sql = <<~SQL
-        SELECT id, name, nickname, birth_date, stack
-        FROM people WHERE search LIKE $1
-        LIMIT 50
-      SQL
+    sql = <<~SQL
+      SELECT id, name, nickname, birth_date, stack
+      FROM people WHERE search LIKE $1
+      LIMIT 50
+    SQL
 
-      execute_with_params(sql, ["%#{term.downcase}%"])
-    end
+    execute_with_params(sql, ["%#{term.downcase}%"])
   end
 
   def find(id)
-    Async do 
-      sql = <<~SQL
-        SELECT id, name, nickname, birth_date, stack
-        FROM people WHERE id = $1
-      SQL
+    sql = <<~SQL
+      SELECT id, name, nickname, birth_date, stack
+      FROM people WHERE id = $1
+    SQL
 
-      execute_with_params(sql, [id]).first
-    end
+    execute_with_params(sql, [id]).first
   end
 
   def create_person(nickname, name, birth_date, stack)
-    Async do
-      SecureRandom.uuid.tap do |uuid|
-        validate_str!(nickname)
-        validate_str!(name)
-        validate_date!(birth_date)
+    SecureRandom.uuid.tap do |uuid|
+      validate_str!(nickname)
+      validate_str!(name)
+      validate_date!(birth_date)
 
-        validate_length!(nickname, 32)
-        validate_length!(name, 100)
+      validate_length!(nickname, 32)
+      validate_length!(name, 100)
 
-        sql = <<~SQL
-          INSERT INTO people (id, nickname, name, birth_date, stack)
-          VALUES ($1, $2, $3, $4, $5)
-        SQL
+      sql = <<~SQL
+        INSERT INTO people (id, nickname, name, birth_date, stack)
+        VALUES ($1, $2, $3, $4, $5)
+      SQL
 
-        execute_with_params(sql, 
-          [uuid, nickname, name, birth_date, cast_stack(stack)],
-        )
-      end
+      execute_with_params(sql, 
+        [uuid, nickname, name, birth_date, cast_stack(stack)],
+      )
     end
   end
 
   def count 
-    Async do 
-      execute_with_params("SELECT COUNT(*) FROM people", [])
-        .first['count']
-        .to_i
-    end
+    execute_with_params("SELECT COUNT(*) FROM people", [])
+      .first['count']
+      .to_i
   end
 
   private
@@ -92,11 +83,7 @@ class PeopleRepository
 
   def execute_with_params(sql, params)
     DatabaseAdapter.pool.with do |conn|
-      conn.send_query_params(sql, params)
-
-      conn.get_result.to_a.tap do
-        conn.discard_results
-      end
+      conn.exec_params(sql, params)
     end
   end
 end

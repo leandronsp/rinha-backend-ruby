@@ -8,11 +8,10 @@ gem 'connection_pool'
 
 # Rack
 gem 'rack'
+gem 'puma'
+gem 'falcon'
 
 # Rack apps
-gem 'puma'
-gem 'roda'
 gem 'chespirito'
 
 gem 'async'
-gem 'falcon'
