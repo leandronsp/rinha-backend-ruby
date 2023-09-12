@@ -2,36 +2,36 @@ version: '3.9'
 
 services:
   api1: &api
-    build: 
-      context: .
-      target: base
-    container_name: api1
+    build: .
     environment:
       - RUBY_YJIT_ENABLE=1
       - DB_POOL_SIZE=10
+      - HTTP_PORT=3000
     command: rackup
     volumes:
       - .:/app
       - rubygems:/usr/local/bundle
     depends_on:
       - postgres
+    network_mode: host
     deploy:
       resources:
         limits:
           cpus: '0.2'
           memory: '0.3GB'
 
-  api2: 
+  api2:
     <<: *api
-    container_name: api2
+    environment:
+      - RUBY_YJIT_ENABLE=1
+      - DB_POOL_SIZE=10
+      - HTTP_PORT=3001
 
   postgres:
     image: postgres
-    container_name: postgres
     environment:
       - POSTGRES_PASSWORD=postgres
-    ports:
-      - 5432:5432
+    network_mode: host
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
@@ -43,12 +43,10 @@ services:
           memory: '1.7GB'
 
   nginx:
-    image: nginx 
-    container_name: nginx
+    image: nginx
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - 9999:9999
+    network_mode: host
     depends_on:
       - api1
       - api2

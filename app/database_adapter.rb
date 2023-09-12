@@ -16,7 +16,7 @@ class DatabaseAdapter
 
   def self.configuration
     base_config = {
-      host: 'postgres',
+      host: 'localhost',
       dbname: 'postgres',
       user: 'postgres',
       password: 'postgres'
@@ -25,7 +25,7 @@ class DatabaseAdapter
     return base_config unless ENV['PGBOUNCER_ENABLED']
 
     base_config.merge({
-      host: 'pgbouncer',
+      host: 'localhost',
       port: 6432
     })
   end

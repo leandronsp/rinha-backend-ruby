@@ -20,7 +20,7 @@ class PeopleController < Chespirito::Controller
     PeopleRepository::ValidationError
   ].freeze
 
-  def search 
+  def search
     if term = request.params['t']
       repository = PeopleRepository.new
       results = repository.search(term)
@@ -32,12 +32,12 @@ class PeopleController < Chespirito::Controller
       response.body = serialized.to_json
       response.status = 200
       response.headers['Content-Type'] = 'application/json'
-    else 
+    else
       response.status = 400
     end
   end
 
-  def show 
+  def show
     repository = PeopleRepository.new
     person = repository.find(request.params['id'])
 
@@ -46,7 +46,7 @@ class PeopleController < Chespirito::Controller
     response.headers['Content-Type'] = 'application/json'
   end
 
-  def create 
+  def create
     repository = PeopleRepository.new
 
     uuid = repository.create_person(
@@ -62,7 +62,7 @@ class PeopleController < Chespirito::Controller
     response.status = 422
   end
 
-  def count 
+  def count
     repository = PeopleRepository.new
 
     response.body = repository.count.to_s
@@ -78,6 +78,6 @@ RinhaApp = Chespirito::App.configure do |app|
   app.register_route('GET', '/contagem-pessoas', [PeopleController, :count])
 end
 
-Rack::Handler::Falcon.run RinhaApp, Port: 3000, Host: '0.0.0.0'
+Rack::Handler::Falcon.run RinhaApp, Port: (ENV['HTTP_PORT'] || 3000).to_i, Host: '0.0.0.0'
 #Rack::Handler::Puma.run RinhaApp, Port: 3000, Threads: '0:16'
 #Adelnor::Server.run RinhaApp, 3000
