@@ -33,6 +33,7 @@ class PeopleRepository
 
       validate_length!(nickname, 32)
       validate_length!(name, 100)
+      validate_array_of_str!(stack)
 
       sql = <<~SQL
         INSERT INTO people (id, nickname, name, birth_date, stack)
